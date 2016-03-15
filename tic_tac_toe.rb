@@ -1,3 +1,4 @@
+require 'pry'
 WINNING_COMBOS = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 4, 7],
                   [2, 5, 8], [3, 6, 9], [1, 5, 9], [3, 5, 7]].freeze
 
@@ -100,6 +101,7 @@ def advanced_computer_spot_selection(current_board)
   computer_spot ||= find_critical_square(user_numbers, computer_numbers)
   computer_spot ||= find_best_square(user_numbers, computer_numbers)
   computer_spot ||= 5 if current_board[5] == :blank
+  computer_spot ||= [1, 3, 7, 9].sample
   computer_spot
 end
 
@@ -129,9 +131,12 @@ def find_best_square(user_numbers, computer_numbers)
   user_possible_winning_combos = find_possible_winning_combos(user_numbers, computer_numbers)
   computer_possible_winning_combos = find_possible_winning_combos(computer_numbers, user_numbers)
   fork_opportunities = find_fork_opportunities(user_possible_winning_combos, user_numbers)
+  best_square(fork_opportunities, computer_possible_winning_combos, computer_numbers)
+end
 
+def best_square(fork_opportunities, computer_possible_winning_combos, computer_numbers)
   if fork_opportunities.length == 2
-    select_best_computer_square(computer_possible_winning_combos, computer_numbers, fork_opportunities)
+    best_square_with_two_forks(computer_possible_winning_combos, computer_numbers, fork_opportunities)
   elsif fork_opportunities.length > 1
     fork_opportunities.select { |fork_sq| computer_possible_winning_combos.flatten.include?(fork_sq) }.sample
   else
@@ -139,7 +144,7 @@ def find_best_square(user_numbers, computer_numbers)
   end
 end
 
-def select_best_computer_square(computer_possible_winning_combos, computer_numbers, fork_opportunities)
+def best_square_with_two_forks(computer_possible_winning_combos, computer_numbers, fork_opportunities)
   computer_possible_winning_combos.flatten.select do |combo_sq|
     !(computer_numbers + fork_opportunities).include?(combo_sq)
   end.sample
