@@ -13,7 +13,7 @@ Style/IfUnlessModifier:
   Description: Favor modifier if/unless usage when you have a single-line body.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#if-as-a-modifier
   Enabled: false
-  MaxLineLength: 80
+  MaxLineLength: 105
 
 Style/NumericLiterals:
   Description: Add underscores to large numeric literals to improve their readability.
@@ -52,7 +52,7 @@ Style/WhileUntilModifier:
   Description: Favor modifier while/until usage when you have a single-line body.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#while-as-a-modifier
   Enabled: false
-  MaxLineLength: 80
+  MaxLineLength: 105
 
 Style/WordArray:
   Description: Use %w or %W for arrays of words.
@@ -77,7 +77,7 @@ Metrics/LineLength:
   Description: Limit lines to 80 characters.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#80-character-limits
   Enabled: false
-  Max: 80
+  Max: 100
   AllowURI: true
   URISchemes:
   - http
@@ -104,6 +104,12 @@ Style/EmptyLiteral:
   Description: Prefer literals to Array.new/Hash.new/String.new.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#literal-array-hash
   Enabled: false
+
+Style/IfUnlessModifier:
+  MaxLineLength: 105
+
+Style/LineLength:
+  Max: 100
 
 Style/ModuleFunction:
   Description: Checks for usage of `extend self` in modules.

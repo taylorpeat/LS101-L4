@@ -1,29 +1,28 @@
 WINNING_COMBOS = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 4, 7],
-                  [2, 5, 8], [3, 6, 9], [1, 5, 9], [3, 5, 7]]
+                  [2, 5, 8], [3, 6, 9], [1, 5, 9], [3, 5, 7]].freeze
 
 DISPLAY_TEMPLATE = { x: ['   .   .   ', '    \ /    ', '     /     ', '    / \    ', '   .   .   '],
                      o: ['   .--.    ', '  :    :   ', '  |    |   ', '  :    ;   ', '   `--\'    '],
-                     blank: [' ' * 11, ' ' * 11, ' ' * 11, ' ' * 11, ' ' * 11] }
+                     blank: [' ' * 11, ' ' * 11, ' ' * 11, ' ' * 11, ' ' * 11] }.freeze
 PLAYER_MARKER = :x
 COMPUTER_MARKER = :o
 
-
 def prompt(message)
-  puts "=> " + message
+  puts '=> ' + message
 end
 
 def select_difficulty
-  prompt "Please select your difficulty (easy/hard)"
-  loop do 
+  prompt 'Please select your difficulty (easy/hard)'
+  loop do
     difficulty = gets.chomp.downcase
-    return difficulty if ["easy", "hard"].include?(difficulty)
+    return difficulty if %w(easy hard).include?(difficulty)
     prompt "That is not a valid selection.\nPlease re-enter your difficulty. (easy/hard)"
   end
 end
 
 def initialize_board
   board = {}
-  (1..9).each {|position| board[position] = :blank}
+  (1..9).each { |position| board[position] = :blank }
   board
 end
 
@@ -37,7 +36,7 @@ def update_board(current_board)
   spacer = ' ' * 4
   puts
   (1..9).step(3) do |square_num|
-    for col in 0..4
+    (0..4).each do |col|
       puts "#{spacer}#{DISPLAY_TEMPLATE[current_board[square_num]][col]}|"\
            "#{DISPLAY_TEMPLATE[current_board[square_num + 1]][col]}|"\
            "#{DISPLAY_TEMPLATE[current_board[square_num + 2]][col]}"
@@ -49,57 +48,54 @@ end
 def update_prompt(loc)
   spacer = ' ' * 16
   puts
-  prompt("Select an available location between 1 and 9")
+  prompt('Select an available location between 1 and 9')
   puts format("\n%s %s | %s | %s\n"\
-                "%s---+---+---\n"\
-                "%s %s | %s | %s\n"\
-                "%s---+---+---\n"\
-                "%s %s | %s | %s\n",
-                spacer, loc[0], loc[1], loc[2],
-                spacer,
-                spacer, loc[3], loc[4], loc[5],
-                spacer,
-                spacer, loc[6], loc[7], loc[8])
+              "%s---+---+---\n"\
+              "%s %s | %s | %s\n"\
+              "%s---+---+---\n"\
+              "%s %s | %s | %s\n",
+              spacer, loc[0], loc[1], loc[2],
+              spacer,
+              spacer, loc[3], loc[4], loc[5],
+              spacer,
+              spacer, loc[6], loc[7], loc[8])
 end
 
 def user_select_square(current_board, square_index)
   loop do
     user_spot = gets.chomp
 
-    if square_index.include?(user_spot)
-      return user_spot.to_i
-    else
-      update_screen(current_board, square_index)
-      puts
-      prompt(user_error_message(user_spot))
-    end
+    return user_spot.to_i if square_index.include?(user_spot)
+    update_screen(current_board, square_index)
+    puts
+    prompt(user_error_message(user_spot))
   end
 end
 
 def user_error_message(user_spot)
-  if (1..9).include?(user_spot.to_i)
-    "That square has been taken. Please select another square"
+  if (1..9).cover?(user_spot.to_i)
+    'That square has been taken. Please select another square'
   else
-    "That is not a valid selection. Please select a number between 1 and 9."
+    'That is not a valid selection. Please select a number between 1 and 9.'
   end
 end
 
 def update_board_and_index(current_board, square_index, selection, player_marker)
   current_board[selection] = player_marker
-  square_index[selection - 1] = " "
+  square_index[selection - 1] = ' '
   return current_board, square_index
 end
 
 def check_winner(current_board, player_marker)
-  player_numbers = current_board.select { |num, sq| sq == player_marker }
-  return WINNING_COMBOS.any? do |combo|
+  player_numbers = current_board.select { |_, sq| sq == player_marker }
+  WINNING_COMBOS.any? do |combo|
     combo.all? { |combo_num| player_numbers.include?(combo_num) }
   end
 end
 
 def advanced_computer_spot_selection(current_board)
-  user_numbers = current_board.select { |num, sq| sq == PLAYER_MARKER }.keys
-  computer_numbers = current_board.select { |num, sq| sq == COMPUTER_MARKER }.keys
+  user_numbers = current_board.select { |_, sq| sq == PLAYER_MARKER }.keys
+  computer_numbers = current_board.select { |_, sq| sq == COMPUTER_MARKER }.keys
   computer_spot = find_critical_square(computer_numbers, user_numbers)
   computer_spot ||= find_critical_square(user_numbers, computer_numbers)
   computer_spot ||= find_best_square(user_numbers, computer_numbers)
@@ -133,7 +129,7 @@ def find_best_square(user_numbers, computer_numbers)
   user_possible_winning_combos = find_possible_winning_combos(user_numbers, computer_numbers)
   computer_possible_winning_combos = find_possible_winning_combos(computer_numbers, user_numbers)
   fork_opportunities = find_fork_opportunities(user_possible_winning_combos, user_numbers)
-  
+
   if fork_opportunities.length == 2
     select_best_computer_square(computer_possible_winning_combos, computer_numbers, fork_opportunities)
   elsif fork_opportunities.length > 1
@@ -150,7 +146,7 @@ def select_best_computer_square(computer_possible_winning_combos, computer_numbe
 end
 
 def find_possible_winning_combos(p1_numbers, p2_numbers)
-  p1_winning_combos = WINNING_COMBOS.select do |combo|
+  WINNING_COMBOS.select do |combo|
     combo.all? { |sq| !p2_numbers.include?(sq) } && combo.any? { |sq| p1_numbers.include?(sq) }
   end
 end
@@ -188,7 +184,7 @@ def display_winner_message(winner, difficulty)
 end
 
 def congratulate_winner
-  prompt("Congratulations! You won!")
+  prompt('Congratulations! You won!')
   sleep 1
   prompt("On easy...\n\n")
 end
@@ -199,12 +195,11 @@ end
 
 def comment_on_tie(difficulty)
   prompt("Tied. Try it on easy if you feel like winning...\n\n")
-  if difficulty == "easy"
+  if difficulty == 'easy'
     sleep 1
     prompt("Oh wait... you are on easy... ouch\n\n")
-  end 
+  end
 end
-
 
 # Initialize board and select difficulty
 system 'clear' or system 'cls'
@@ -221,16 +216,16 @@ loop do # MAIN LOOP
                                                        user_selection, PLAYER_MARKER)
 
   update_screen(current_board, square_index)
-  
+
   winner = :user if check_winner(current_board, PLAYER_MARKER)
   break if winner
-  break if current_board.select {|num, sq| sq == :blank}.empty?
+  break if current_board.select { |_, sq| sq == :blank }.empty?
 
-  computer_selection = difficulty == "hard" ? advanced_computer_spot_selection(current_board) : nil
+  computer_selection = difficulty == 'hard' ? advanced_computer_spot_selection(current_board) : nil
   computer_selection ||= square_index.select { |sq| sq != ' ' }.sample.to_i
   current_board, square_index = update_board_and_index(current_board, square_index,
                                                        computer_selection, COMPUTER_MARKER)
-  
+
   sleep 1
   update_screen(current_board, square_index)
 
