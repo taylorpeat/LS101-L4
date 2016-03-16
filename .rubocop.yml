@@ -13,7 +13,7 @@ Style/IfUnlessModifier:
   Description: Favor modifier if/unless usage when you have a single-line body.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#if-as-a-modifier
   Enabled: false
-  MaxLineLength: 105
+  MaxLineLength: 100
 
 Style/NumericLiterals:
   Description: Add underscores to large numeric literals to improve their readability.
@@ -52,7 +52,7 @@ Style/WhileUntilModifier:
   Description: Favor modifier while/until usage when you have a single-line body.
   StyleGuide: https://github.com/bbatsov/ruby-style-guide#while-as-a-modifier
   Enabled: false
-  MaxLineLength: 105
+  MaxLineLength: 100
 
 Style/WordArray:
   Description: Use %w or %W for arrays of words.
@@ -106,7 +106,7 @@ Style/EmptyLiteral:
   Enabled: false
 
 Style/IfUnlessModifier:
-  MaxLineLength: 105
+  MaxLineLength: 100
 
 Style/LineLength:
   Max: 100
